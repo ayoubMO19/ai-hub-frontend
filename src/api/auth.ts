@@ -3,7 +3,8 @@ import type { User } from '@/types'
 
 interface AuthResponse {
   user: User
-  token: string
+  accessToken: string
+  refreshToken: string
 }
 
 export async function login(email: string, password: string): Promise<AuthResponse> {
@@ -11,7 +12,16 @@ export async function login(email: string, password: string): Promise<AuthRespon
   return data
 }
 
-export async function register(email: string, password: string, name: string): Promise<AuthResponse> {
-  const { data } = await axiosInstance.post<AuthResponse>('/auth/register', { email, password, name })
+export async function register(email: string, password: string): Promise<AuthResponse> {
+  const { data } = await axiosInstance.post<AuthResponse>('/auth/register', { email, password })
   return data
+}
+
+export async function refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+  const { data } = await axiosInstance.post('/auth/refresh', { refreshToken })
+  return data
+}
+
+export async function logout(): Promise<void> {
+  await axiosInstance.post('/auth/logout')
 }

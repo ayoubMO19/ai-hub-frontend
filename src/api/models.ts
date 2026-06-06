@@ -3,7 +3,7 @@ import type { Model, PaginatedResponse } from '@/types'
 
 export interface GetModelsParams {
   search?: string
-  provider?: string
+  providers?: string[]
   isOpenSource?: boolean
   isMultimodal?: boolean
   minContext?: number
@@ -13,7 +13,12 @@ export interface GetModelsParams {
 }
 
 export async function getModels(params?: GetModelsParams): Promise<PaginatedResponse<Model>> {
-  const { data } = await axiosInstance.get<PaginatedResponse<Model>>('/models', { params })
+  const { providers, ...rest } = params || {}
+  const query: Record<string, unknown> = { ...rest }
+  if (providers && providers.length > 0) {
+    query.provider = providers.join(',')
+  }
+  const { data } = await axiosInstance.get<PaginatedResponse<Model>>('/models', { params: query })
   return data
 }
 

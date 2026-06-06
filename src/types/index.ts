@@ -40,7 +40,7 @@ export interface RankingItem {
 
 export interface ModelFilters {
   search: string
-  provider: string
+  providers: string[]
   isOpenSource: boolean | null
   isMultimodal: boolean | null
   minContext: number | null

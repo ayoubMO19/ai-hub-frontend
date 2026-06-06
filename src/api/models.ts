@@ -1,7 +1,18 @@
 import axiosInstance from '@/lib/axiosInstance'
 import type { Model, PaginatedResponse } from '@/types'
 
-export async function getModels(params?: Record<string, string>): Promise<PaginatedResponse<Model>> {
+export interface GetModelsParams {
+  search?: string
+  provider?: string
+  isOpenSource?: boolean
+  isMultimodal?: boolean
+  minContext?: number
+  maxPrice?: number
+  page?: number
+  limit?: number
+}
+
+export async function getModels(params?: GetModelsParams): Promise<PaginatedResponse<Model>> {
   const { data } = await axiosInstance.get<PaginatedResponse<Model>>('/models', { params })
   return data
 }

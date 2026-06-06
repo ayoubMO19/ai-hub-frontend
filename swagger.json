@@ -1,0 +1,544 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "AppController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Health check endpoint",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "409": {
+            "description": "Email already in use"
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        },
+        "summary": "Login with email and password",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Token refreshed successfully"
+          },
+          "401": {
+            "description": "Invalid refresh token"
+          }
+        },
+        "summary": "Refresh access token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Logged out successfully"
+          }
+        },
+        "summary": "Logout and invalidate refresh token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "operationId": "ModelsController_findAll",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "claude",
+              "type": "string"
+            }
+          },
+          {
+            "name": "provider",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "openai",
+              "type": "string"
+            }
+          },
+          {
+            "name": "isOpenSource",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "isMultimodal",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "minContext",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 128000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "example": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of models"
+          }
+        },
+        "summary": "List all AI models with filters and pagination",
+        "tags": [
+          "Models"
+        ]
+      }
+    },
+    "/api/v1/models/{slug}": {
+      "get": {
+        "operationId": "ModelsController_findBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Model not found"
+          }
+        },
+        "summary": "Get model details by slug",
+        "tags": [
+          "Models"
+        ]
+      }
+    },
+    "/api/v1/providers": {
+      "get": {
+        "operationId": "ProvidersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of providers"
+          }
+        },
+        "summary": "List all providers with model counts",
+        "tags": [
+          "Providers"
+        ]
+      }
+    },
+    "/api/v1/providers/{slug}": {
+      "get": {
+        "operationId": "ProvidersController_findBySlug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "404": {
+            "description": "Provider not found"
+          }
+        },
+        "summary": "Get provider details by slug",
+        "tags": [
+          "Providers"
+        ]
+      }
+    },
+    "/api/v1/rankings": {
+      "get": {
+        "operationId": "RankingsController_getAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All rankings"
+          }
+        },
+        "summary": "Get all rankings combined",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/rankings/cheapest": {
+      "get": {
+        "operationId": "RankingsController_getCheapest",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Cheapest models ranking"
+          }
+        },
+        "summary": "Top 10 cheapest models by input price",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/rankings/largest-context": {
+      "get": {
+        "operationId": "RankingsController_getLargestContext",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Largest context window ranking"
+          }
+        },
+        "summary": "Top 10 models with largest context window",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/rankings/fastest": {
+      "get": {
+        "operationId": "RankingsController_getFastest",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Fastest models ranking"
+          }
+        },
+        "summary": "Top 10 fastest models by tokens per second",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/rankings/open-source": {
+      "get": {
+        "operationId": "RankingsController_getOpenSource",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Open source models ranking"
+          }
+        },
+        "summary": "Top 10 open source models by context window",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/rankings/multimodal": {
+      "get": {
+        "operationId": "RankingsController_getMultimodal",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Multimodal models ranking"
+          }
+        },
+        "summary": "Top 10 multimodal models by price",
+        "tags": [
+          "Rankings"
+        ]
+      }
+    },
+    "/api/v1/watchlist": {
+      "get": {
+        "operationId": "WatchlistController_getMyWatchlist",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of watchlist items"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "summary": "Get my watchlist",
+        "tags": [
+          "Watchlist"
+        ]
+      }
+    },
+    "/api/v1/watchlist/{modelId}": {
+      "post": {
+        "operationId": "WatchlistController_add",
+        "parameters": [
+          {
+            "name": "modelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Model added to watchlist"
+          },
+          "404": {
+            "description": "Model not found"
+          },
+          "409": {
+            "description": "Already in watchlist"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "summary": "Add model to watchlist",
+        "tags": [
+          "Watchlist"
+        ]
+      },
+      "delete": {
+        "operationId": "WatchlistController_remove",
+        "parameters": [
+          {
+            "name": "modelId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model removed from watchlist"
+          },
+          "404": {
+            "description": "Not in watchlist"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "summary": "Remove model from watchlist",
+        "tags": [
+          "Watchlist"
+        ]
+      }
+    },
+    "/api/v1/sync/trigger": {
+      "post": {
+        "operationId": "SyncController_trigger",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Manually trigger a sync",
+        "tags": [
+          "Sync"
+        ]
+      }
+    },
+    "/api/v1/sync/status": {
+      "get": {
+        "operationId": "SyncController_getStatus",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get sync status",
+        "tags": [
+          "Sync"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "AI Hub API",
+    "description": "\n  ## AI Models Intelligence API\n\n  REST API that aggregates and normalizes data from multiple AI model providers.\n  Real-time rankings, pricing comparisons, and model capabilities.\n\n  ### Features\n  - 🔄 Auto-sync from OpenRouter & HuggingFace every 6 hours\n  - ⚡ Redis-cached rankings (15min TTL)\n  - 🔐 JWT authentication with refresh tokens\n  - 📊 Dynamic rankings: cheapest, fastest, largest context\n\n  ### Rate limiting\n  100 requests / 60 seconds per IP\n    ",
+    "version": "1.0.0",
+    "contact": {
+      "name": "AI Hub",
+      "url": "https://github.com/ayoubMO19/ai-hub",
+      "email": "ayoubmorghiouhda@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://aihub.ayoubmorghi.com",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Development"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "JWT": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Enter your JWT access token"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "strongPassword123"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "strongPassword123"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      }
+    }
+  }
+}

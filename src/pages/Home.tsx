@@ -1,21 +1,35 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { MOCK_MODELS, MOCK_STATS, MOCK_RANKINGS, MOCK_PROVIDERS } from '@/data/mock'
 import type { ModelFilters, RankingType } from '@/types'
+import { formatPrice, formatContext } from '@/lib/utils'
 import StatCard from '@/components/ui/StatCard'
-import RankingCard from '@/components/ui/RankingCard'
 import FilterSidebar from '@/components/ui/FilterSidebar'
-import ModelRowHeader from '@/components/ui/ModelRowHeader'
-import ModelRow from '@/components/ui/ModelRow'
+import ModelTable from '@/components/ui/ModelTable'
 
 type SortBy = 'price-asc' | 'price-desc' | 'context' | 'name'
 
-const rankingSections: { type: RankingType; label: string; emoji: string }[] = [
-  { type: 'cheapest', label: 'Cheapest Models', emoji: '💰' },
-  { type: 'largest-context', label: 'Largest Context', emoji: '📖' },
-  { type: 'fastest', label: 'Fastest Models', emoji: '⚡' },
-  { type: 'open-source', label: 'Open Source', emoji: '🔓' },
-  { type: 'multimodal', label: 'Multimodal', emoji: '🖼️' },
+const rankingTabs: { type: RankingType; label: string }[] = [
+  { type: 'cheapest', label: 'Cheapest' },
+  { type: 'largest-context', label: 'Largest Context' },
+  { type: 'fastest', label: 'Fastest' },
+  { type: 'open-source', label: 'Open Source' },
+  { type: 'multimodal', label: 'Multimodal' },
 ]
+
+function formatMetric(value: number, type: RankingType): string {
+  switch (type) {
+    case 'cheapest':
+      return formatPrice(value)
+    case 'largest-context':
+      return formatContext(value)
+    case 'fastest':
+      return 'Fast'
+    case 'open-source':
+      return formatContext(value)
+    case 'multimodal':
+      return formatPrice(value)
+  }
+}
 
 const sortOptions: { value: SortBy; label: string }[] = [
   { value: 'price-asc', label: 'Price: Low to High' },
@@ -23,6 +37,8 @@ const sortOptions: { value: SortBy; label: string }[] = [
   { value: 'context', label: 'Context Window' },
   { value: 'name', label: 'Name A-Z' },
 ]
+
+const PAGE_SIZE = 20
 
 function Home() {
   const [filters, setFilters] = useState<ModelFilters>({
@@ -34,6 +50,8 @@ function Home() {
     maxPrice: null,
   })
   const [sortBy, setSortBy] = useState<SortBy>('price-asc')
+  const [activeRanking, setActiveRanking] = useState<RankingType>('cheapest')
+  const [page, setPage] = useState(1)
 
   const filteredModels = useMemo(() => {
     let result = [...MOCK_MODELS]
@@ -86,6 +104,15 @@ function Home() {
     return result
   }, [filters, sortBy])
 
+  const totalPages = Math.max(1, Math.ceil(filteredModels.length / PAGE_SIZE))
+  const safePage = Math.min(page, totalPages)
+  const paginatedModels = filteredModels.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const startItem = (safePage - 1) * PAGE_SIZE + 1
+  const endItem = Math.min(safePage * PAGE_SIZE, filteredModels.length)
+
+  // Reset page when filters change
+  useEffect(() => { setPage(1) }, [filters, sortBy])
+
   return (
     <div className="mx-auto max-w-7xl px-4">
       {/* ── Hero ─────────────────────────────────── */}
@@ -128,30 +155,57 @@ function Home() {
       </section>
 
       {/* ── Rankings ──────────────────────────────── */}
-      <section id="rankings" className="mt-16 space-y-10">
-        {rankingSections.map(({ type, label, emoji }) => {
-          const items = MOCK_RANKINGS[type]
-          return (
-            <div key={type}>
-              <h2 className="mb-4 text-xl font-semibold text-text-primary">
-                {emoji} {label}
-              </h2>
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {items.map((item) => (
-                  <RankingCard
-                    key={item.rank}
-                    rank={item.rank}
-                    name={item.model.name}
-                    providerName={item.model.provider.name}
-                    metricValue={item.metricValue}
-                    type={type}
-                    slug={item.model.slug}
-                  />
-                ))}
+      <section id="rankings" className="mt-16">
+        <div className="mx-auto max-w-2xl">
+          {/* Tabs */}
+          <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-border bg-bg-secondary p-1">
+            {rankingTabs.map(({ type, label }) => (
+              <button
+                key={type}
+                onClick={() => setActiveRanking(type)}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  activeRanking === type
+                    ? 'bg-accent text-white'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Ranking list */}
+          <div className="mt-6">
+            {MOCK_RANKINGS[activeRanking].map((item) => (
+              <div
+                key={item.rank}
+                className="group flex items-center gap-4 border-b border-border py-3 transition-colors hover:bg-bg-tertiary"
+              >
+                <span className="w-8 text-center font-mono text-lg font-bold text-border-strong">
+                  {item.rank}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-text-primary">
+                    {item.model.name}
+                  </p>
+                  <p className="truncate text-xs text-text-secondary">
+                    {item.model.provider.name}
+                  </p>
+                </div>
+                <span className="shrink-0 font-mono text-sm font-semibold text-accent">
+                  {formatMetric(item.metricValue, activeRanking)}
+                </span>
               </div>
-            </div>
-          )
-        })}
+            ))}
+          </div>
+
+          {/* View all link */}
+          <div className="mt-6 text-center">
+            <span className="cursor-pointer text-sm text-text-muted transition-colors hover:text-text-secondary">
+              View all rankings →
+            </span>
+          </div>
+        </div>
       </section>
 
       {/* ── Explorer ──────────────────────────────── */}
@@ -191,21 +245,31 @@ function Home() {
               </select>
             </div>
 
-            {filteredModels.length > 0 ? (
-              <>
-                <ModelRowHeader />
-                <div>
-                  {filteredModels.map((model, i) => (
-                    <ModelRow key={model.id} model={model} rank={i + 1} />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <p className="text-lg font-medium text-text-primary">No models found</p>
-                <p className="mt-1 text-sm text-text-secondary">
-                  Try adjusting your filters or search query.
+            <ModelTable models={paginatedModels} rankOffset={(safePage - 1) * PAGE_SIZE} />
+
+            {/* Pagination */}
+            {filteredModels.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-4 py-4">
+                <p className="text-sm text-text-secondary">
+                  Showing <span className="font-medium text-text-primary">{startItem}–{endItem}</span> of{' '}
+                  <span className="font-medium text-text-primary">{filteredModels.length}</span> models
                 </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage <= 1}
+                    className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={safePage >= totalPages}
+                    className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             )}
           </div>

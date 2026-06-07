@@ -1,21 +1,19 @@
 interface BadgeProps {
   variant: 'openSource' | 'multimodal' | 'free' | 'default'
-  size?: 'sm' | 'xs'
 }
 
-const variantStyles: Record<BadgeProps['variant'], { bg: string; text: string; border: string; label: string }> = {
-  openSource: { bg: 'bg-green-900/50', text: 'text-green-400', border: 'border-green-500/30', label: 'Open Source' },
-  multimodal: { bg: 'bg-blue-900/50', text: 'text-blue-400', border: 'border-blue-500/30', label: 'Multimodal' },
-  free: { bg: 'bg-emerald-900/50', text: 'text-emerald-400', border: 'border-emerald-500/30', label: 'Free' },
-  default: { bg: 'bg-gray-800', text: 'text-gray-400', border: 'border-gray-600', label: 'Default' },
+const variantStyles: Record<BadgeProps['variant'], { classes: string; label: string }> = {
+  openSource: { classes: 'text-green-400 border-green-400/20 bg-green-400/5', label: 'Open Source' },
+  multimodal: { classes: 'text-blue-400 border-blue-400/20 bg-blue-400/5', label: 'Multimodal' },
+  free: { classes: 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5', label: 'Free' },
+  default: { classes: 'text-gray-400 border-gray-400/20 bg-gray-400/5', label: 'Default' },
 }
 
-function Badge({ variant, size = 'sm' }: BadgeProps) {
+function Badge({ variant }: BadgeProps) {
   const s = variantStyles[variant]
-  const sizeClass = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0.5 text-[10px]'
 
   return (
-    <span className={`inline-block rounded-full border font-mono leading-none ${s.bg} ${s.text} ${s.border} ${sizeClass}`}>
+    <span className={`inline-block rounded-sm border px-1.5 py-0.5 font-mono text-[10px] leading-none ${s.classes}`}>
       {s.label}
     </span>
   )

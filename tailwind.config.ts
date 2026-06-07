@@ -10,19 +10,19 @@ const config: Config = {
     extend: {
       colors: {
         bg: {
-          primary: '#0a0a0a',
-          secondary: '#111111',
-          tertiary: '#1a1a1a',
+          primary: 'var(--color-bg-primary)',
+          secondary: 'var(--color-bg-secondary)',
+          tertiary: 'var(--color-bg-tertiary)',
         },
         border: {
-          subtle: '#1e1e1e',
-          DEFAULT: '#2a2a2a',
-          strong: '#333333',
+          subtle: 'var(--color-border)',
+          DEFAULT: 'var(--color-border)',
+          strong: 'var(--color-border)',
         },
         text: {
-          primary: '#f0f0f0',
-          secondary: '#a0a0a0',
-          muted: '#555555',
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          muted: 'var(--color-text-muted)',
         },
         accent: {
           DEFAULT: '#7c6af5',

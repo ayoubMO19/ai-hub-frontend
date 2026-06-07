@@ -6,7 +6,7 @@ interface StatCardProps {
 
 function StatCard({ value, label, suffix }: StatCardProps) {
   return (
-    <div>
+    <div className="flex items-center justify-center flex-col">
       <div className="font-mono text-4xl font-semibold text-text-primary">
         {value}
         {suffix && <span className="ml-1 text-lg text-text-muted">{suffix}</span>}

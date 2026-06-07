@@ -25,6 +25,8 @@ export interface Model {
   isDeprecated: boolean
   isFeatured: boolean
   source: string
+  sourceApiId: string
+  syncedAt: string
   rawData?: Record<string, unknown>
   createdAt: string
 }

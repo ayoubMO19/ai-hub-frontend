@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import type { Model } from '@/types'
 import { formatPrice, formatContext, priceColorClass, formatSpeed } from '@/lib/utils'
 import Badge from './Badge'
@@ -6,10 +5,10 @@ import Badge from './Badge'
 interface ModelTableProps {
   models: Model[]
   rankOffset?: number
+  onRowClick?: (model: Model) => void
 }
 
-function ModelTable({ models, rankOffset = 0 }: ModelTableProps) {
-  const navigate = useNavigate()
+function ModelTable({ models, rankOffset = 0, onRowClick }: ModelTableProps) {
 
   if (models.length === 0) {
     return (
@@ -39,7 +38,7 @@ function ModelTable({ models, rankOffset = 0 }: ModelTableProps) {
         {models.map((model, i) => (
           <tr
             key={model.id}
-            onClick={() => navigate(`/models/${model.slug}`)}
+            onClick={() => onRowClick?.(model)}
             className="cursor-pointer border-b border-border transition-colors hover:bg-bg-tertiary"
           >
             <td className="hidden px-4 py-3 text-center font-mono text-sm text-text-muted md:table-cell">

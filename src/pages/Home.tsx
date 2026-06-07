@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
-import type { ModelFilters, RankingType } from '@/types'
+import type { Model, ModelFilters, RankingType } from '@/types'
 import { formatPrice, formatContext, formatSpeed } from '@/lib/utils'
 import { useModels } from '@/hooks/useModels'
+import { useModel } from '@/hooks/useModels'
 import { useAllRankings } from '@/hooks/useRankings'
 import { useProviders } from '@/hooks/useProviders'
 import StatCard from '@/components/ui/StatCard'
 import FilterSidebar from '@/components/ui/FilterSidebar'
 import ModelTable from '@/components/ui/ModelTable'
+import ModelModal from '@/components/ui/ModelModal'
 
 type SortBy = 'price-asc' | 'price-desc' | 'context' | 'name'
 
@@ -62,6 +64,11 @@ function Home() {
   const [activeRanking, setActiveRanking] = useState<RankingType>('cheapest')
   const [page, setPage] = useState(1)
 
+  const [selectedModel, setSelectedModel] = useState<Model | null>(null)
+  const { data: modalModel } = useModel(selectedModel?.slug ?? '', {
+    initialData: selectedModel ?? undefined,
+  })
+
   useEffect(() => { setPage(1) }, [filters, sortBy])
 
   const { data: modelsPage, isLoading: modelsLoading, isError: modelsError } = useModels({
@@ -97,8 +104,9 @@ function Home() {
   const endItem = Math.min(page * PAGE_SIZE, totalModels)
 
   return (
+    <>
     <div className="mx-auto max-w-7xl px-4">
-      {/* ── Hero ─────────────────────────────────── */}
+      {/* Hero */}
       <section className="flex flex-col items-center py-20 text-center">
         <h1 className="text-5xl font-bold text-text-primary">
           AI Models Hub
@@ -129,7 +137,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ── Stats ─────────────────────────────────── */}
+      {/* Stats */}
       <section className="grid grid-cols-2 gap-6 md:grid-cols-4">
         <StatCard value={MOCK_STATS.totalModels} label="Total Models" />
         <StatCard value={MOCK_STATS.totalProviders} label="Providers" />
@@ -137,7 +145,7 @@ function Home() {
         <StatCard value={MOCK_STATS.freeModels} label="Free Models" />
       </section>
 
-      {/* ── Rankings ──────────────────────────────── */}
+      {/* Rankings */}
       <section id="rankings" className="mt-16">
         <div className="mx-auto max-w-2xl">
           <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-border bg-bg-secondary p-1">
@@ -194,7 +202,7 @@ function Home() {
         </div>
       </section>
 
-      {/* ── Explorer ──────────────────────────────── */}
+      {/* Explorer */}
       <section id="models" className="mt-16">
         <div className="flex gap-6">
           <div className="hidden lg:block">
@@ -247,7 +255,11 @@ function Home() {
               </div>
             ) : (
               <>
-                <ModelTable models={models} rankOffset={(page - 1) * PAGE_SIZE} />
+                <ModelTable
+                  models={models}
+                  rankOffset={(page - 1) * PAGE_SIZE}
+                  onRowClick={setSelectedModel}
+                />
 
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between px-4 py-4">
@@ -279,6 +291,14 @@ function Home() {
         </div>
       </section>
     </div>
+
+    {selectedModel && modalModel && (
+      <ModelModal
+        model={modalModel}
+        onClose={() => setSelectedModel(null)}
+      />
+    )}
+    </>
   )
 }
 

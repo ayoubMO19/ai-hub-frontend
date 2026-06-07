@@ -15,11 +15,17 @@ export interface Model {
   description?: string
   provider: Provider
   contextWindow: number
-  inputPricePerToken: number
-  outputPricePerToken: number
+  inputPricePer1M: number
+  outputPricePer1M: number
+  speedTokensPerSec: number | null
+  maxOutputTokens: number
+  capabilities: string[]
   isOpenSource: boolean
   isMultimodal: boolean
-  speed?: 'fast' | 'medium' | 'slow'
+  isDeprecated: boolean
+  isFeatured: boolean
+  source: string
+  rawData?: Record<string, unknown>
   createdAt: string
 }
 

@@ -45,6 +45,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-05-13T00:00:00.000Z',
   },
   {
@@ -63,6 +65,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-07-18T00:00:00.000Z',
   },
   {
@@ -81,6 +85,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2022-11-30T00:00:00.000Z',
   },
   {
@@ -99,6 +105,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-06-20T00:00:00.000Z',
   },
   {
@@ -117,6 +125,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-03-04T00:00:00.000Z',
   },
   {
@@ -135,6 +145,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-03-04T00:00:00.000Z',
   },
   {
@@ -153,6 +165,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-02-15T00:00:00.000Z',
   },
   {
@@ -171,6 +185,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-02-15T00:00:00.000Z',
   },
   {
@@ -189,6 +205,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-07-23T00:00:00.000Z',
   },
   {
@@ -207,6 +225,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-07-23T00:00:00.000Z',
   },
   {
@@ -225,6 +245,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-07-23T00:00:00.000Z',
   },
   {
@@ -243,6 +265,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-02-26T00:00:00.000Z',
   },
   {
@@ -261,6 +285,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2023-09-27T00:00:00.000Z',
   },
   {
@@ -279,6 +305,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2023-12-11T00:00:00.000Z',
   },
   {
@@ -297,6 +325,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-05-06T00:00:00.000Z',
   },
   {
@@ -315,6 +345,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-06-17T00:00:00.000Z',
   },
   {
@@ -333,6 +365,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-09-19T00:00:00.000Z',
   },
   {
@@ -351,6 +385,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-04-04T00:00:00.000Z',
   },
   {
@@ -369,6 +405,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-08-13T00:00:00.000Z',
   },
   {
@@ -387,6 +425,8 @@ export const MOCK_MODELS: Model[] = [
     isDeprecated: false,
     isFeatured: false,
     source: 'OPENROUTER',
+    sourceApiId: '',
+    syncedAt: '2024-01-01T00:00:00.000Z',
     createdAt: '2024-04-23T00:00:00.000Z',
   },
 ]

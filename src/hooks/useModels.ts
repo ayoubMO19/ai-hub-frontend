@@ -15,10 +15,11 @@ export function useModels({ filters, page = 1, limit = 20 }: UseModelsParams = {
   })
 }
 
-export function useModel(slug: string) {
+export function useModel(slug: string, options?: { initialData?: Model }) {
   return useQuery<Model>({
     queryKey: ['model', slug],
     queryFn: () => getModelBySlug(slug),
     enabled: !!slug,
+    initialData: options?.initialData,
   })
 }

@@ -17,6 +17,8 @@ export interface BackendModel {
   isFeatured: boolean
   capabilities: string[]
   source: string
+  sourceApiId: string
+  syncedAt: string
   rawData?: Record<string, unknown>
   createdAt: string
   updatedAt: string
@@ -50,6 +52,8 @@ export function backendModelToModel(b: BackendModel): Model {
     isDeprecated: b.isDeprecated,
     isFeatured: b.isFeatured,
     source: b.source,
+    sourceApiId: b.sourceApiId,
+    syncedAt: b.syncedAt,
     rawData: b.rawData,
     createdAt: b.createdAt,
   }

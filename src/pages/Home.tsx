@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { ModelFilters, RankingType } from '@/types'
 import { formatPrice, formatContext } from '@/lib/utils'
 import { useModels } from '@/hooks/useModels'
@@ -68,15 +68,30 @@ function Home() {
     filters,
     page,
     limit: PAGE_SIZE,
-    sortBy,
   })
 
   const { data: rankingsData, isLoading: rankingsLoading } = useAllRankings()
   const { data: providersData } = useProviders()
 
-  const models = modelsPage?.data ?? []
+  const rawModels = modelsPage?.data ?? []
   const totalModels = modelsPage?.total ?? 0
   const totalPages = modelsPage?.totalPages ?? 1
+
+  const models = useMemo(() => {
+    const sorted = [...rawModels]
+    switch (sortBy) {
+      case 'price-asc':
+        return sorted.sort((a, b) => a.inputPricePerToken - b.inputPricePerToken)
+      case 'price-desc':
+        return sorted.sort((a, b) => b.inputPricePerToken - a.inputPricePerToken)
+      case 'context':
+        return sorted.sort((a, b) => b.contextWindow - a.contextWindow)
+      case 'name':
+        return sorted.sort((a, b) => a.name.localeCompare(b.name))
+      default:
+        return sorted
+    }
+  }, [rawModels, sortBy])
 
   const startItem = (page - 1) * PAGE_SIZE + 1
   const endItem = Math.min(page * PAGE_SIZE, totalModels)
@@ -145,7 +160,7 @@ function Home() {
             {rankingsLoading ? (
               <p className="py-8 text-center text-sm text-text-secondary">Loading rankings…</p>
             ) : Array.isArray(rankingsData?.[activeRanking]) && rankingsData[activeRanking].length > 0 ? (
-              rankingsData[activeRanking].map((item) => (
+              rankingsData[activeRanking].slice(0, 5).map((item) => (
                 <div
                   key={item.rank}
                   className="group flex items-center gap-4 border-b border-border py-3 transition-colors hover:bg-bg-tertiary"
@@ -167,7 +182,7 @@ function Home() {
                 </div>
               ))
             ) : (
-              <p className="py-8 text-center text-sm text-text-secondary">Failed to load rankings.</p>
+              <p className="py-8 text-center text-sm text-text-secondary">No rankings available.</p>
             )}
           </div>
 

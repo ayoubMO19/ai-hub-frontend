@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ModelFilters, Provider } from '@/types'
 
 interface FilterSidebarProps {
@@ -5,6 +6,8 @@ interface FilterSidebarProps {
   onChange: (filters: ModelFilters) => void
   providers: Provider[]
 }
+
+const INITIAL_VISIBLE = 5
 
 const contextOptions = [
   { label: 'Any', value: null },
@@ -31,6 +34,8 @@ function CheckIcon() {
 }
 
 function FilterSidebar({ filters, onChange, providers }: FilterSidebarProps) {
+  const [providersExpanded, setProvidersExpanded] = useState(false)
+  const visibleProviders = providersExpanded ? providers : providers.slice(0, INITIAL_VISIBLE)
   return (
     <aside className="flex w-64 shrink-0 flex-col gap-6 border-r border-border p-4">
       {/* Search */}
@@ -55,7 +60,7 @@ function FilterSidebar({ filters, onChange, providers }: FilterSidebarProps) {
           Provider
         </h3>
         <div className="mt-2 space-y-1">
-          {providers.map((p) => {
+          {visibleProviders.map((p) => {
             const checked = filters.providers.includes(p.slug)
             return (
               <label key={p.id} className="flex cursor-pointer items-center gap-2">
@@ -77,6 +82,14 @@ function FilterSidebar({ filters, onChange, providers }: FilterSidebarProps) {
               </label>
             )
           })}
+          {providers.length > INITIAL_VISIBLE && (
+            <button
+              onClick={() => setProvidersExpanded((e) => !e)}
+              className="mt-1 text-xs font-medium text-accent hover:underline"
+            >
+              {providersExpanded ? 'Show less' : `Show more (${providers.length - INITIAL_VISIBLE} more)`}
+            </button>
+          )}
         </div>
       </section>
 

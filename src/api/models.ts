@@ -16,7 +16,6 @@ function cleanParams(params: Record<string, unknown>): Record<string, unknown> {
 export type GetModelsParams = Partial<ModelFilters> & {
   page?: number
   limit?: number
-  sortBy?: string
 }
 
 export async function getModels(params?: GetModelsParams): Promise<PaginatedResponse<Model>> {

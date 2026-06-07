@@ -49,8 +49,8 @@ function computeMetricLabel(type: RankingType): string {
 export async function getAllRankings(): Promise<Record<RankingType, RankingItem[]>> {
   const { data } = await axiosInstance.get<Record<string, BackendRankingResponse>>('/rankings')
   const result = {} as Record<RankingType, RankingItem[]>
-  for (const [key, ranking] of Object.entries(data)) {
-    const type = key as RankingType
+  for (const [, ranking] of Object.entries(data)) {
+    const type = ranking.ranking as RankingType
     result[type] = computeRankingItems(ranking.models, type)
   }
   return result

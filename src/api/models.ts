@@ -1,13 +1,17 @@
 import axiosInstance from '@/lib/axiosInstance'
-import type { Model, PaginatedResponse } from '@/types'
+import type { Model, ModelFilters, PaginatedResponse } from '@/types'
 
-export interface GetModelsParams {
-  search?: string
-  providers?: string[]
-  isOpenSource?: boolean
-  isMultimodal?: boolean
-  minContext?: number
-  maxPrice?: number
+function cleanParams(params: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
+  for (const [key, val] of Object.entries(params)) {
+    if (val !== null && val !== undefined && val !== '') {
+      result[key] = val
+    }
+  }
+  return result
+}
+
+export type GetModelsParams = Partial<ModelFilters> & {
   page?: number
   limit?: number
 }
@@ -18,7 +22,9 @@ export async function getModels(params?: GetModelsParams): Promise<PaginatedResp
   if (providers && providers.length > 0) {
     query.provider = providers.join(',')
   }
-  const { data } = await axiosInstance.get<PaginatedResponse<Model>>('/models', { params: query })
+  const { data } = await axiosInstance.get<PaginatedResponse<Model>>('/models', {
+    params: cleanParams(query),
+  })
   return data
 }
 

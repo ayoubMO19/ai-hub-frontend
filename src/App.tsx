@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import Home from './pages/Home'
 import Compare from './pages/Compare'
 import Header from './components/layout/Header'
+import Footer from './components/layout/Footer'
 
 function Layout() {
   return (
@@ -10,6 +11,7 @@ function Layout() {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </>
   )
 }

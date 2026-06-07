@@ -102,9 +102,9 @@ function ModelRow({ model, rank, isBookmarked, onBookmark }: ModelRowProps) {
         <SpeedDot speed={model.speed} />
 
         <div className="flex items-center gap-1.5">
-          {model.inputPricePerToken === 0 && <Badge variant="free" size="xs" />}
-          {model.isOpenSource && <Badge variant="openSource" size="xs" />}
-          {model.isMultimodal && <Badge variant="multimodal" size="xs" />}
+          {model.inputPricePerToken === 0 && <Badge variant="free" />}
+          {model.isOpenSource && <Badge variant="openSource" />}
+          {model.isMultimodal && <Badge variant="multimodal" />}
         </div>
 
         <div className="flex justify-center">

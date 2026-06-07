@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Model } from '@/types'
-import { formatPrice, formatContext, priceColorClass } from '@/lib/utils'
+import { formatPrice, formatContext, priceColorClass, formatSpeed } from '@/lib/utils'
 import Badge from './Badge'
 
 interface ModelRowProps {
@@ -11,28 +11,6 @@ interface ModelRowProps {
 }
 
 const desktopGrid = 'grid-cols-[3rem_1fr_7rem_7rem_7rem_5rem_auto_2.5rem]'
-
-function SpeedDot({ speed }: { speed?: 'fast' | 'medium' | 'slow' }) {
-  const colorMap: Record<string, string> = {
-    fast: 'bg-green-400',
-    medium: 'bg-yellow-400',
-    slow: 'bg-red-400',
-  }
-  const labelMap: Record<string, string> = {
-    fast: 'Fast',
-    medium: 'Medium',
-    slow: 'Slow',
-  }
-  const color = speed ? colorMap[speed] : 'bg-gray-500'
-  const label = speed ? labelMap[speed] : '—'
-
-  return (
-    <span className="inline-flex items-center gap-1.5 text-sm text-text-secondary">
-      <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
-      {label}
-    </span>
-  )
-}
 
 function BookmarkBtn({ filled, onClick }: { filled: boolean; onClick?: () => void }) {
   return (
@@ -65,8 +43,8 @@ function ModelRow({ model, rank, isBookmarked, onBookmark }: ModelRowProps) {
             <p className="truncate text-sm font-medium text-text-primary">{model.name}</p>
             <p className="truncate text-xs text-text-secondary">{model.provider.name}</p>
           </div>
-          <span className={`shrink-0 font-mono text-sm ${priceColorClass(model.inputPricePerToken)}`}>
-            {formatPrice(model.inputPricePerToken)}
+          <span className={`shrink-0 font-mono text-sm ${priceColorClass(model.inputPricePer1M)}`}>
+            {formatPrice(model.inputPricePer1M)}
           </span>
         </div>
         {onBookmark && (
@@ -91,18 +69,20 @@ function ModelRow({ model, rank, isBookmarked, onBookmark }: ModelRowProps) {
           {formatContext(model.contextWindow)}
         </span>
 
-        <span className={`font-mono text-sm ${priceColorClass(model.inputPricePerToken)}`}>
-          {formatPrice(model.inputPricePerToken)}
+        <span className={`font-mono text-sm ${priceColorClass(model.inputPricePer1M)}`}>
+          {formatPrice(model.inputPricePer1M)}
         </span>
 
         <span className="font-mono text-sm text-text-secondary">
-          {formatPrice(model.outputPricePerToken)}
+          {formatPrice(model.outputPricePer1M)}
         </span>
 
-        <SpeedDot speed={model.speed} />
+        <span className="font-mono text-sm text-text-secondary">
+          {formatSpeed(model.speedTokensPerSec)}
+        </span>
 
         <div className="flex items-center gap-1.5">
-          {model.inputPricePerToken === 0 && <Badge variant="free" />}
+          {model.inputPricePer1M === 0 && <Badge variant="free" />}
           {model.isOpenSource && <Badge variant="openSource" />}
           {model.isMultimodal && <Badge variant="multimodal" />}
         </div>

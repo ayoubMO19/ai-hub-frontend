@@ -17,6 +17,7 @@ export interface BackendModel {
   isFeatured: boolean
   capabilities: string[]
   source: string
+  rawData?: Record<string, unknown>
   createdAt: string
   updatedAt: string
   provider: {
@@ -39,13 +40,17 @@ export function backendModelToModel(b: BackendModel): Model {
       website: b.provider.website ?? undefined,
     },
     contextWindow: b.contextWindow,
-    inputPricePerToken: parseFloat(b.inputPricePer1M),
-    outputPricePerToken: parseFloat(b.outputPricePer1M),
+    inputPricePer1M: parseFloat(b.inputPricePer1M),
+    outputPricePer1M: parseFloat(b.outputPricePer1M),
+    speedTokensPerSec: b.speedTokensPerSec,
+    maxOutputTokens: b.maxOutputTokens,
+    capabilities: b.capabilities,
     isOpenSource: b.isOpenSource,
     isMultimodal: b.isMultimodal,
-    speed: b.speedTokensPerSec !== null
-      ? b.speedTokensPerSec >= 50 ? 'fast' : b.speedTokensPerSec >= 20 ? 'medium' : 'slow'
-      : undefined,
+    isDeprecated: b.isDeprecated,
+    isFeatured: b.isFeatured,
+    source: b.source,
+    rawData: b.rawData,
     createdAt: b.createdAt,
   }
 }

@@ -15,3 +15,9 @@ export function priceColorClass(pricePerM: number): string {
   if (pricePerM <= 5) return 'text-text-primary'
   return 'text-orange-400'
 }
+
+export function formatSpeed(tps: number | null): string {
+  if (tps === null || tps === undefined) return '—'
+  if (tps >= 1000) return `${(tps / 1000).toFixed(1)}K t/s`
+  return `${Math.round(tps)} t/s`
+}

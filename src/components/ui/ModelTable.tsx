@@ -1,33 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import type { Model } from '@/types'
-import { formatPrice, formatContext, priceColorClass } from '@/lib/utils'
+import { formatPrice, formatContext, priceColorClass, formatSpeed } from '@/lib/utils'
 import Badge from './Badge'
 
 interface ModelTableProps {
   models: Model[]
   rankOffset?: number
-}
-
-function SpeedDot({ speed }: { speed?: 'fast' | 'medium' | 'slow' }) {
-  const colorMap: Record<string, string> = {
-    fast: 'bg-green-400',
-    medium: 'bg-yellow-400',
-    slow: 'bg-red-400',
-  }
-  const labelMap: Record<string, string> = {
-    fast: 'Fast',
-    medium: 'Medium',
-    slow: 'Slow',
-  }
-  const color = speed ? colorMap[speed] : 'bg-gray-500'
-  const label = speed ? labelMap[speed] : '—'
-
-  return (
-    <span className="inline-flex items-center gap-1.5 text-sm text-text-secondary">
-      <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
-      <span>{label}</span>
-    </span>
-  )
 }
 
 function ModelTable({ models, rankOffset = 0 }: ModelTableProps) {
@@ -74,20 +52,18 @@ function ModelTable({ models, rankOffset = 0 }: ModelTableProps) {
             <td className="hidden px-4 py-3 text-right font-mono text-sm text-text-secondary md:table-cell">
               {formatContext(model.contextWindow)}
             </td>
-            <td className={`px-4 py-3 text-right font-mono text-sm ${priceColorClass(model.inputPricePerToken)}`}>
-              {formatPrice(model.inputPricePerToken)}
+            <td className={`px-4 py-3 text-right font-mono text-sm ${priceColorClass(model.inputPricePer1M)}`}>
+              {formatPrice(model.inputPricePer1M)}
             </td>
             <td className="hidden px-4 py-3 text-right font-mono text-sm text-text-secondary lg:table-cell">
-              {formatPrice(model.outputPricePerToken)}
+              {formatPrice(model.outputPricePer1M)}
             </td>
-            <td className="hidden px-4 py-3 md:table-cell">
-              <div className="flex justify-center">
-                <SpeedDot speed={model.speed} />
-              </div>
+            <td className="hidden px-4 py-3 text-center font-mono text-sm text-text-secondary md:table-cell">
+              {formatSpeed(model.speedTokensPerSec)}
             </td>
             <td className="hidden px-4 py-3 md:table-cell">
               <div className="flex justify-center gap-1">
-                {model.inputPricePerToken === 0 && <Badge variant="free" />}
+                {model.inputPricePer1M === 0 && <Badge variant="free" />}
                 {model.isOpenSource && <Badge variant="openSource" />}
                 {model.isMultimodal && <Badge variant="multimodal" />}
               </div>

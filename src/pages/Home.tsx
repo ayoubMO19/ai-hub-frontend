@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import type { ModelFilters, RankingType } from '@/types'
-import { formatPrice, formatContext } from '@/lib/utils'
+import { formatPrice, formatContext, formatSpeed } from '@/lib/utils'
 import { useModels } from '@/hooks/useModels'
 import { useAllRankings } from '@/hooks/useRankings'
 import { useProviders } from '@/hooks/useProviders'
@@ -32,7 +32,7 @@ function formatMetric(value: number, type: RankingType): string {
     case 'largest-context':
       return formatContext(value)
     case 'fastest':
-      return 'Fast'
+      return formatSpeed(value)
     case 'open-source':
       return formatContext(value)
     case 'multimodal':
@@ -81,9 +81,9 @@ function Home() {
     const sorted = [...rawModels]
     switch (sortBy) {
       case 'price-asc':
-        return sorted.sort((a, b) => a.inputPricePerToken - b.inputPricePerToken)
+        return sorted.sort((a, b) => a.inputPricePer1M - b.inputPricePer1M)
       case 'price-desc':
-        return sorted.sort((a, b) => b.inputPricePerToken - a.inputPricePerToken)
+        return sorted.sort((a, b) => b.inputPricePer1M - a.inputPricePer1M)
       case 'context':
         return sorted.sort((a, b) => b.contextWindow - a.contextWindow)
       case 'name':

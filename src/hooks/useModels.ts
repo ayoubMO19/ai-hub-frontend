@@ -6,13 +6,12 @@ interface UseModelsParams {
   filters?: Partial<ModelFilters>
   page?: number
   limit?: number
-  sortBy?: string
 }
 
-export function useModels({ filters, page = 1, limit = 20, sortBy }: UseModelsParams = {}) {
+export function useModels({ filters, page = 1, limit = 20 }: UseModelsParams = {}) {
   return useQuery<PaginatedResponse<Model>>({
-    queryKey: ['models', filters, page, limit, sortBy],
-    queryFn: () => getModels({ ...filters, page, limit, sortBy }),
+    queryKey: ['models', filters, page, limit],
+    queryFn: () => getModels({ ...filters, page, limit }),
   })
 }
 

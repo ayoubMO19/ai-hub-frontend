@@ -1,12 +1,21 @@
-import { useState, useMemo, useEffect } from 'react'
-import { MOCK_MODELS, MOCK_STATS, MOCK_RANKINGS, MOCK_PROVIDERS } from '@/data/mock'
+import { useState, useEffect } from 'react'
 import type { ModelFilters, RankingType } from '@/types'
 import { formatPrice, formatContext } from '@/lib/utils'
+import { useModels } from '@/hooks/useModels'
+import { useAllRankings } from '@/hooks/useRankings'
+import { useProviders } from '@/hooks/useProviders'
 import StatCard from '@/components/ui/StatCard'
 import FilterSidebar from '@/components/ui/FilterSidebar'
 import ModelTable from '@/components/ui/ModelTable'
 
 type SortBy = 'price-asc' | 'price-desc' | 'context' | 'name'
+
+const MOCK_STATS = {
+  totalModels: 847,
+  totalProviders: 24,
+  avgInputPrice: 2.34,
+  freeModels: 127,
+}
 
 const rankingTabs: { type: RankingType; label: string }[] = [
   { type: 'cheapest', label: 'Cheapest' },
@@ -53,65 +62,24 @@ function Home() {
   const [activeRanking, setActiveRanking] = useState<RankingType>('cheapest')
   const [page, setPage] = useState(1)
 
-  const filteredModels = useMemo(() => {
-    let result = [...MOCK_MODELS]
-
-    const q = filters.search.toLowerCase().trim()
-    if (q) {
-      result = result.filter(
-        (m) =>
-          m.name.toLowerCase().includes(q) ||
-          m.provider.name.toLowerCase().includes(q) ||
-          (m.description ?? '').toLowerCase().includes(q),
-      )
-    }
-
-    if (filters.providers.length > 0) {
-      result = result.filter((m) => filters.providers.includes(m.provider.slug))
-    }
-
-    if (filters.isOpenSource === true) {
-      result = result.filter((m) => m.isOpenSource)
-    }
-
-    if (filters.isMultimodal === true) {
-      result = result.filter((m) => m.isMultimodal)
-    }
-
-    if (filters.minContext !== null) {
-      result = result.filter((m) => m.contextWindow >= filters.minContext!)
-    }
-
-    if (filters.maxPrice !== null) {
-      result = result.filter((m) => m.inputPricePerToken <= filters.maxPrice!)
-    }
-
-    switch (sortBy) {
-      case 'price-asc':
-        result.sort((a, b) => a.inputPricePerToken - b.inputPricePerToken)
-        break
-      case 'price-desc':
-        result.sort((a, b) => b.inputPricePerToken - a.inputPricePerToken)
-        break
-      case 'context':
-        result.sort((a, b) => b.contextWindow - a.contextWindow)
-        break
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name))
-        break
-    }
-
-    return result
-  }, [filters, sortBy])
-
-  const totalPages = Math.max(1, Math.ceil(filteredModels.length / PAGE_SIZE))
-  const safePage = Math.min(page, totalPages)
-  const paginatedModels = filteredModels.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
-  const startItem = (safePage - 1) * PAGE_SIZE + 1
-  const endItem = Math.min(safePage * PAGE_SIZE, filteredModels.length)
-
-  // Reset page when filters change
   useEffect(() => { setPage(1) }, [filters, sortBy])
+
+  const { data: modelsPage, isLoading: modelsLoading, isError: modelsError } = useModels({
+    filters,
+    page,
+    limit: PAGE_SIZE,
+    sortBy,
+  })
+
+  const { data: rankingsData, isLoading: rankingsLoading } = useAllRankings()
+  const { data: providersData } = useProviders()
+
+  const models = modelsPage?.data ?? []
+  const totalModels = modelsPage?.total ?? 0
+  const totalPages = modelsPage?.totalPages ?? 1
+
+  const startItem = (page - 1) * PAGE_SIZE + 1
+  const endItem = Math.min(page * PAGE_SIZE, totalModels)
 
   return (
     <div className="mx-auto max-w-7xl px-4">
@@ -157,7 +125,6 @@ function Home() {
       {/* ── Rankings ──────────────────────────────── */}
       <section id="rankings" className="mt-16">
         <div className="mx-auto max-w-2xl">
-          {/* Tabs */}
           <div className="flex flex-wrap justify-center gap-1 rounded-xl border border-border bg-bg-secondary p-1">
             {rankingTabs.map(({ type, label }) => (
               <button
@@ -174,32 +141,36 @@ function Home() {
             ))}
           </div>
 
-          {/* Ranking list */}
           <div className="mt-6">
-            {MOCK_RANKINGS[activeRanking].map((item) => (
-              <div
-                key={item.rank}
-                className="group flex items-center gap-4 border-b border-border py-3 transition-colors hover:bg-bg-tertiary"
-              >
-                <span className="w-8 text-center font-mono text-lg font-bold text-border-strong">
-                  {item.rank}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-text-primary">
-                    {item.model.name}
-                  </p>
-                  <p className="truncate text-xs text-text-secondary">
-                    {item.model.provider.name}
-                  </p>
+            {rankingsLoading ? (
+              <p className="py-8 text-center text-sm text-text-secondary">Loading rankings…</p>
+            ) : Array.isArray(rankingsData?.[activeRanking]) && rankingsData[activeRanking].length > 0 ? (
+              rankingsData[activeRanking].map((item) => (
+                <div
+                  key={item.rank}
+                  className="group flex items-center gap-4 border-b border-border py-3 transition-colors hover:bg-bg-tertiary"
+                >
+                  <span className="w-8 text-center font-mono text-lg font-bold text-border-strong">
+                    {item.rank}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-text-primary">
+                      {item.model.name}
+                    </p>
+                    <p className="truncate text-xs text-text-secondary">
+                      {item.model.provider.name}
+                    </p>
+                  </div>
+                  <span className="shrink-0 font-mono text-sm font-semibold text-accent">
+                    {formatMetric(item.metricValue, activeRanking)}
+                  </span>
                 </div>
-                <span className="shrink-0 font-mono text-sm font-semibold text-accent">
-                  {formatMetric(item.metricValue, activeRanking)}
-                </span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="py-8 text-center text-sm text-text-secondary">Failed to load rankings.</p>
+            )}
           </div>
 
-          {/* View all link */}
           <div className="mt-6 text-center">
             <span className="cursor-pointer text-sm text-text-muted transition-colors hover:text-text-secondary">
               View all rankings →
@@ -211,25 +182,23 @@ function Home() {
       {/* ── Explorer ──────────────────────────────── */}
       <section id="models" className="mt-16">
         <div className="flex gap-6">
-          {/* Sidebar — hidden on mobile */}
           <div className="hidden lg:block">
             <FilterSidebar
               filters={filters}
               onChange={setFilters}
-              providers={MOCK_PROVIDERS}
+              providers={providersData ?? []}
             />
           </div>
 
-          {/* Model list */}
           <div className="min-w-0 flex-1">
-            {/* Toolbar */}
             <div className="mb-2 flex items-center justify-between px-4">
               <p className="text-sm text-text-secondary">
-                <span className="font-semibold text-text-primary">{filteredModels.length}</span> models
-                {filteredModels.length !== MOCK_MODELS.length && (
-                  <span className="text-text-muted">
-                    {' '}of {MOCK_MODELS.length}
-                  </span>
+                {modelsError ? (
+                  <span className="text-red-400">Failed to load models.</span>
+                ) : (
+                  <>
+                    <span className="font-semibold text-text-primary">{totalModels}</span> models
+                  </>
                 )}
               </p>
               <select
@@ -245,32 +214,51 @@ function Home() {
               </select>
             </div>
 
-            <ModelTable models={paginatedModels} rankOffset={(safePage - 1) * PAGE_SIZE} />
-
-            {/* Pagination */}
-            {filteredModels.length > PAGE_SIZE && (
-              <div className="flex items-center justify-between px-4 py-4">
-                <p className="text-sm text-text-secondary">
-                  Showing <span className="font-medium text-text-primary">{startItem}–{endItem}</span> of{' '}
-                  <span className="font-medium text-text-primary">{filteredModels.length}</span> models
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={safePage <= 1}
-                    className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={safePage >= totalPages}
-                    className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Next
-                  </button>
-                </div>
+            {modelsLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-sm text-text-secondary">Loading models…</p>
               </div>
+            ) : modelsError ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-lg font-medium text-text-primary">Failed to load models</p>
+                <p className="mt-1 text-sm text-text-secondary">Try again.</p>
+              </div>
+            ) : models.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-lg font-medium text-text-primary">No models found</p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Try adjusting your filters or search query.
+                </p>
+              </div>
+            ) : (
+              <>
+                <ModelTable models={models} rankOffset={(page - 1) * PAGE_SIZE} />
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between px-4 py-4">
+                    <p className="text-sm text-text-secondary">
+                      Showing <span className="font-medium text-text-primary">{startItem}–{endItem}</span> of{' '}
+                      <span className="font-medium text-text-primary">{totalModels}</span> models
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page <= 1}
+                        className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        disabled={page >= totalPages}
+                        className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
